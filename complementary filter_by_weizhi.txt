@@ -1,0 +1,31 @@
+//define BAT_FACTOR 0.78
+//#define BAT_DT     0.005
+
+float BAT_FACTOR=0.88;
+float BAT_DT=0.005;
+
+void BAT_ComplementaryFilter(void)
+{
+    //angle=(Factor)*(angle+gyro*dt)+(1-Factor)*(acc);
+    //bat.mesureRoll  bat.mesurePitch  bat.mesureYaw
+    //bat.unitGyro.x, 
+    //bat.unitGyro.y, 
+    //bat.unitGyro.z,
+    //bat.accX_LPF.output,
+    //bat.accY_LPF.output,
+    //bat.accZ_LPF.output,
+    bat.mesureRoll=BAT_FACTOR*(bat.mesureRoll+bat.unitGyro.x*BAT_DT)+(1-BAT_FACTOR)*safe_asin(bat.accX_LPF.output)*57.2;
+    bat.mesurePitch=BAT_FACTOR*(bat.mesurePitch+bat.unitGyro.y*BAT_DT)+(1-BAT_FACTOR)*safe_asin(bat.accY_LPF.output)*57.2;
+    //bat.mesureYaw=BAT_FACTOR*(bat.mesureYaw+bat.unitGyro.z*BAT_DT)+(1-BAT_FACTOR)*acos(1/bat.accZ_LPF.output);
+    if(bat.mesureRoll>90)  bat.mesureRoll=90;
+	  if(bat.mesurePitch>90) bat.mesurePitch=90;
+	  if(bat.mesureRoll<(-90))  bat.mesureRoll=-90;
+		if(bat.mesurePitch<(-90)) bat.mesurePitch=-90;
+}
+
+void BAT_InitComplementaryFilterParameter(void)
+{
+    bat.mesurePitch=0;
+    bat.mesureRoll=0;
+    bat.mesureYaw=0;
+}
